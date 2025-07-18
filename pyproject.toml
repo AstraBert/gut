@@ -1,0 +1,23 @@
+[project]
+name = "gut"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "llama-index-llms-groq>=0.3.2",
+  "llama-index-workflows>=1.1.0",
+  "mypy>=1.17.0",
+  "pre-commit>=4.2.0",
+  "pydantic>=2.11.7",
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.1.0",
+  "python-dotenv>=1.1.1",
+  "rich>=14.0.0"
+]
+
+[tool.mypy]
+disable_error_code = ["import-not-found", "import-untyped"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

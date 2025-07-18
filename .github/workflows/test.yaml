@@ -1,0 +1,21 @@
+name: CI Tests
+
+on:
+  pull_request:
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Run Tests
+        run: uv run -- pytest tests/test_*.py
