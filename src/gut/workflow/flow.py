@@ -152,6 +152,9 @@ class GutWorkflow(Workflow):
         sllm = llm.as_structured_llm(CommandToExecute)
         response = await sllm.achat(messages)
         output = CommandToExecute.model_validate_json(response.message.content)
+        ctx.write_event_to_stream(
+            CommandExplanationEvent(command=command, explanation=output.explanation)
+        )
         return CommandExplanationEvent(command=command, explanation=output.explanation)
 
     @step
@@ -178,4 +181,5 @@ class GutWorkflow(Workflow):
             return ExecutedEvent(output=out, is_error="An error occurred\n\n:" in out)
         else:
             message = f"My first instructions were: {state.user_message} and you generated: `{command}`. Now I am asking it to re-generate the command with this feedback: {ev.feedback}"
+            ctx.write_event_to_stream(MessageEvent(message=message))
             return MessageEvent(message=message)
