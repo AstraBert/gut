@@ -17,6 +17,7 @@ from .events import (
     CommandExplanationEvent,
     HumanFeedbackEvent,
     ExecutedEvent,
+    ProgressEvent,
 )
 from shell import get_command_info, get_subcommand_info
 from .resources import get_shell, get_xml_formatter, get_llm
@@ -53,10 +54,7 @@ class GutWorkflow(Workflow):
         state.main_command = output.command
         await ctx.store.set_state(state)
         ctx.write_event_to_stream(
-            GitOrGhEvent(
-                main_command=output.command,
-                command_information=get_command_info(output.command),
-            )
+            ProgressEvent(msg=f"Main command chosen: {output.command}")
         )
         return GitOrGhEvent(
             main_command=output.command,
@@ -102,11 +100,8 @@ class GutWorkflow(Workflow):
             state.options = output.options
         await ctx.store.set_state(state)
         ctx.write_event_to_stream(
-            CommandConstructedEvent(
-                **output.model_dump(),
-                info=get_subcommand_info(
-                    main_command=ev.main_command, subcommand=state.command
-                ),
+            ProgressEvent(
+                msg=f"Produced command: {state.main_command} {state.command} {state.subcommand} {state.options}"
             )
         )
         return CommandConstructedEvent(
@@ -116,6 +111,7 @@ class GutWorkflow(Workflow):
             ),
         )
 
+    @step
     async def explain_command(
         self,
         ev: CommandConstructedEvent,
@@ -144,16 +140,23 @@ class GutWorkflow(Workflow):
         mod = CommandToExplain(
             command=command, info=ev.info, user_instructions=state.user_message
         )
-        messages = [
-            ChatMessage(
-                content=f"Based on this model:\n\n{formatter.to_xml(mod)}\n\nCan you please explain the command and how it fulfils the user's instructions?"
-            )
-        ]
+        try:
+            messages = [
+                ChatMessage(
+                    content=f"Based on this model:\n\n{formatter.to_xml(mod)}\n\nCan you please explain the command and how it fulfils the user's instructions?"
+                )
+            ]
+        except Exception:
+            messages = [
+                ChatMessage(
+                    content=f"Based on this JSOn:\n\n```json\n{mod.model_dump_json(indent=4)}\n```\n\nCan you please explain the command and how it fulfils the user's instructions?"
+                )
+            ]
         sllm = llm.as_structured_llm(CommandToExecute)
         response = await sllm.achat(messages)
         output = CommandToExecute.model_validate_json(response.message.content)
         ctx.write_event_to_stream(
-            CommandExplanationEvent(command=command, explanation=output.explanation)
+            ProgressEvent(msg=f"Explanation for the command: {output.explanation}")
         )
         return CommandExplanationEvent(command=command, explanation=output.explanation)
 

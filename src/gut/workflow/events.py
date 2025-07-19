@@ -1,4 +1,10 @@
-from workflows.events import StartEvent, Event, HumanResponseEvent, StopEvent
+from workflows.events import (
+    StartEvent,
+    Event,
+    InputRequiredEvent,
+    HumanResponseEvent,
+    StopEvent,
+)
 from pydantic import Field, model_validator
 from typing import Optional
 from typing_extensions import Self
@@ -6,6 +12,10 @@ from typing_extensions import Self
 
 class MessageEvent(StartEvent):
     message: str
+
+
+class ProgressEvent(Event):
+    msg: str
 
 
 class GitOrGhEvent(Event):
@@ -20,7 +30,7 @@ class CommandConstructedEvent(Event):
     info: str
 
 
-class CommandExplanationEvent(Event):
+class CommandExplanationEvent(InputRequiredEvent):
     command: str
     explanation: str
 

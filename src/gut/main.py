@@ -5,8 +5,7 @@ from rich.columns import Columns
 from .workflow import GutWorkflow
 from .workflow.events import (
     MessageEvent,
-    GitOrGhEvent,
-    CommandConstructedEvent,
+    ProgressEvent,
     CommandExplanationEvent,
     HumanFeedbackEvent,
     ExecutedEvent,
@@ -28,32 +27,15 @@ async def run_workflow() -> int:
     cs.print("[bold cyan]>[/bold cyan] So, what would you like me to do today?")
     user_message = cs.input("[bold magenta]>[/bold magenta]")
     handler = wf.run(start_event=MessageEvent(message=user_message))
-    with cs.status("[bold green]Working on your request...") as _:
-        mc = ""
+    with cs.status("[bold green]Working on your request...") as status:
         async for event in handler.stream_events():
-            if isinstance(event, MessageEvent):
-                cs.log(
-                    f"Starting the workflow with the following instructions from the user: {event.message}"
-                )
-            elif isinstance(event, GitOrGhEvent):
-                mc = event.main_command
-                cs.log(f"Your problem requires {event.main_command}")
-                cs.log(f"Collected information about {event.main_command}")
-            elif isinstance(event, CommandConstructedEvent):
-                command = (
-                    mc + " " + event.command
-                    if event.command
-                    else "" + " " + event.subcommand
-                    if event.subcommand
-                    else "" + " " + event.options
-                )
-                command = command.strip()
-                command = command.replace("  ", " ")
-                cs.log(f"Constructed your command: {command}")
+            if isinstance(event, ProgressEvent):
+                cs.log(event.msg)
             elif isinstance(event, CommandExplanationEvent):
                 cs.log("Here is the explanation of the command:")
                 cs.log(event.explanation)
                 cs.log("Should I go on with executing this command? [Yes/feedback]")
+                status.stop()
                 hitl = cs.input("[bold magenta]>[/bold magenta]")
                 if hitl.strip().lower() == "yes":
                     handler.ctx.send_event(

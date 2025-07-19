@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 import xml.etree.ElementTree as ET
 from xml.dom.minidom import parseString
+from xml.sax.saxutils import escape
 from typing import Callable
 
 
@@ -36,8 +37,9 @@ class XmlFormatter:
         xml = ET.Element(root_tag)
         for k, v in model.model_dump().items():
             sub = ET.SubElement(xml, k.lower())
-            sub.text = str(v)
+            safe_text = escape(str(v), entities={"'": "&apos;", '"': "&quot;"})
+            sub.text = safe_text
         xml_str = ET.tostring(xml, encoding="unicode")
         return (
             parseString(xml_str).toprettyxml().replace('<?xml version="1.0" ?>\n', "")
-        )  # noqa: S318
+        )
