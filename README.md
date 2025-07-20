@@ -17,7 +17,7 @@ pip install gut-ai
 You then just need to set `GROQ_API_KEY` as an environment variable, either exporting it on the console or in a `.env` file in the root folder where you are executing **gut**, and then you can simply launch it via:
 
 ```bash
-gut
+gut-ai
 ```
 
 **Developer settings**
@@ -38,7 +38,7 @@ uv sync
 You then just need to set `GROQ_API_KEY` as an environment variable, either exporting it on the console or in a `.env` file in the root folder where you are executing **gut**, and then you can simply launch it via:
 
 ```bash
-uvx --from . gut
+uvx --from . gut-ai
 ```
 
 ### How Does It Work?
