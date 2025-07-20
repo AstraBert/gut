@@ -38,14 +38,14 @@ async def run_workflow() -> int:
                 status.stop()
                 hitl = cs.input("[bold magenta]>[/bold magenta]")
                 if hitl.strip().lower() == "yes":
-                    handler.ctx.send_event(
+                    handler.ctx.send_event(  # type: ignore[union-attr]
                         HumanFeedbackEvent(
                             approved=True,
                             feedback="",
                         )
                     )
                 else:
-                    handler.ctx.send_event(
+                    handler.ctx.send_event(  # type: ignore[union-attr]
                         HumanFeedbackEvent(
                             approved=False,
                             feedback=hitl,
