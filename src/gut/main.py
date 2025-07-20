@@ -1,7 +1,5 @@
 import asyncio
 
-from typing import cast
-from workflows import Context
 from rich.console import Console
 from rich.table import Table
 from .workflow import GutWorkflow
@@ -39,16 +37,15 @@ async def run_workflow() -> int:
                 cs.log("Should I go on with executing this command? [Yes/feedback]")
                 status.stop()
                 hitl = cs.input("[bold magenta]>[/bold magenta]")
-                handler.ctx = cast(Context, handler.ctx)
                 if hitl.strip().lower() == "yes":
-                    handler.ctx.send_event(
+                    handler.ctx.send_event(  # type: ignore[union-attr]
                         HumanFeedbackEvent(
                             approved=True,
                             feedback="",
                         )
                     )
                 else:
-                    handler.ctx.send_event(
+                    handler.ctx.send_event(  # type: ignore[union-attr]
                         HumanFeedbackEvent(
                             approved=False,
                             feedback=hitl,
