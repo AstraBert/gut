@@ -11,7 +11,7 @@
 **gut** is available as a python package, and cna be easily installed with:
 
 ```bash
-pip install gut
+pip install gut-ai
 ```
 
 You then just need to set `GROQ_API_KEY` as an environment variable, either exporting it on the console or in a `.env` file in the root folder where you are executing **gut**, and then you can simply launch it via:

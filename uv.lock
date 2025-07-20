@@ -336,7 +336,7 @@ wheels = [
 ]
 
 [[package]]
-name = "gut"
+name = "gut-ai"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "gut"
+name = "gut-ai"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -21,7 +21,7 @@ dependencies = [
 ]
 
 [project.scripts]
-gut = "gut.main:main"
+gut-ai = "gut.main:main"
 
 [tool.hatch.build.targets.wheel]
 only-include = ["src/gut"]
