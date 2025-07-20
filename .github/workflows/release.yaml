@@ -15,16 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
-
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
       - name: Build
         run: uv build
 
-      - name: Publish
-      - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
+      - name: Publish to PyPI
+        run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          generateReleaseNotes: true

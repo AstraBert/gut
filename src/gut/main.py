@@ -1,7 +1,7 @@
 import asyncio
 
 from rich.console import Console
-from rich.columns import Columns
+from rich.table import Table
 from .workflow import GutWorkflow
 from .workflow.events import (
     MessageEvent,
@@ -52,10 +52,17 @@ async def run_workflow() -> int:
                         )
                     )
     result: ExecutedEvent = await handler
-    error = "no" if not result.is_error else "yes"
-    columns = [f"Errors: {error}", f"Output: {result.output}"]
-    cs.print("[bold cyan]>[/bold cyan] Execution status:")
-    cs.print(Columns(columns))
+    error = "No Errors" if not result.is_error else "yes"
+    output = "No Output Captured" if not result.output else result.output
+    table = Table(show_footer=False)
+    table.title = "Execution Details"
+    table.add_column("Captured Output", justify="center")
+    table.add_column("Errors", justify="center")
+    table.add_row(
+        output,
+        error,
+    )
+    cs.print(table)
     return 0
 
 
