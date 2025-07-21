@@ -33,7 +33,8 @@ class GitCommand(BaseModel):
         "rebase",
         "reset",
         "switch",
-        "tagcheckout",
+        "tag",
+        "checkout",
         # Collaborate
         "fetch",
         "pull",

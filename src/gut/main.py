@@ -24,46 +24,50 @@ async def run_workflow() -> int:
     else:
         cs.print("[bold cyan]>[/bold cyan] Well, then, see you next time!")
         return 0
-    cs.print("[bold cyan]>[/bold cyan] So, what would you like me to do today?")
-    user_message = cs.input("[bold magenta]>[/bold magenta]")
-    handler = wf.run(start_event=MessageEvent(message=user_message))
-    with cs.status("[bold green]Working on your request...") as status:
-        async for event in handler.stream_events():
-            if isinstance(event, ProgressEvent):
-                cs.log(event.msg)
-            elif isinstance(event, CommandExplanationEvent):
-                cs.log("Here is the explanation of the command:")
-                cs.log(event.explanation)
-                cs.log("Should I go on with executing this command? [Yes/feedback]")
-                status.stop()
-                hitl = cs.input("[bold magenta]>[/bold magenta]")
-                if hitl.strip().lower() == "yes":
-                    handler.ctx.send_event(  # type: ignore[union-attr]
-                        HumanFeedbackEvent(
-                            approved=True,
-                            feedback="",
+    while True:
+        cs.print(
+            "[bold cyan]>[/bold cyan] So, what would you like me to do now? (Use q to quit)"
+        )
+        user_message = cs.input("[bold magenta]>[/bold magenta]")
+        if user_message == "q":
+            return 0
+        handler = wf.run(start_event=MessageEvent(message=user_message))
+        with cs.status("[bold green]Working on your request...") as status:
+            async for event in handler.stream_events():
+                if isinstance(event, ProgressEvent):
+                    cs.log(event.msg)
+                elif isinstance(event, CommandExplanationEvent):
+                    cs.log("Here is the explanation of the command:")
+                    cs.log(event.explanation)
+                    cs.log("Should I go on with executing this command? [Yes/feedback]")
+                    status.stop()
+                    hitl = cs.input("[bold magenta]>[/bold magenta]")
+                    if hitl.strip().lower() == "yes":
+                        handler.ctx.send_event(  # type: ignore[union-attr]
+                            HumanFeedbackEvent(
+                                approved=True,
+                                feedback="",
+                            )
                         )
-                    )
-                else:
-                    handler.ctx.send_event(  # type: ignore[union-attr]
-                        HumanFeedbackEvent(
-                            approved=False,
-                            feedback=hitl,
+                    else:
+                        handler.ctx.send_event(  # type: ignore[union-attr]
+                            HumanFeedbackEvent(
+                                approved=False,
+                                feedback=hitl,
+                            )
                         )
-                    )
-    result: ExecutedEvent = await handler
-    error = "No Errors" if not result.is_error else "yes"
-    output = "No Output Captured" if not result.output else result.output
-    table = Table(show_footer=False)
-    table.title = "Execution Details"
-    table.add_column("Captured Output", justify="center")
-    table.add_column("Errors", justify="center")
-    table.add_row(
-        output,
-        error,
-    )
-    cs.print(table)
-    return 0
+        result: ExecutedEvent = await handler
+        error = "No Errors" if not result.is_error else "yes"
+        output = "No Output Captured" if not result.output else result.output
+        table = Table(show_footer=False)
+        table.title = "Execution Details"
+        table.add_column("Captured Output", justify="center")
+        table.add_column("Errors", justify="center")
+        table.add_row(
+            output,
+            error,
+        )
+        cs.print(table)
 
 
 def main():
