@@ -52,6 +52,20 @@ Example interactions:
 - "Push my changes to origin"
 - "Create a pull request"
 
+You can also run gut to check and correct your commands:
+
+```bash
+gut-ai --command "git commit 'feat: analytics'" --question "Why is my command failing?"
+```
+
+Or to simply explain them:
+
+```bash
+gut-ai --command "git checkout -b 'feat/analytics'"
+```
+
+> **Note**: You can also use the `-c` and `-q` as abbreviated flags.
+
 ## 🔧 Development Setup
 
 ### Prerequisites
@@ -76,12 +90,20 @@ uvx --from . gut-ai
 
 gut uses an AI-powered workflow built with [llama-index-workflows](https://github.com/run-llama/workflows-py) that follows these steps:
 
+**Gut interface**
+
 1. **Command Analysis**: Analyzes your natural language input to understand intent
 2. **Command Selection**: Chooses between `git` and `gh` based on your requirements
 3. **Parameter Mapping**: Determines the specific subcommands and options needed
 4. **Explanation Generation**: Creates a clear explanation of what the command will do
 5. **Human Validation**: Shows you the command and explanation for approval
 6. **Execution**: Runs the command if approved, or restarts the process with your feedback
+
+**Gut --command and --question**
+
+1. **Command Analysis**: Analyzes your command and question, producing an explanation and a potential fix for it.
+2. **Human Validation**: Shows you the explanation and, if there, the corrected command and waits for approval
+3. **Execution**: Runs the command if approved, or restarts the process with your feedback
 
 The entire experience runs in a beautiful [Rich](https://github.com/Textualize/rich) console interface with structured inputs and outputs using Pydantic models.
 

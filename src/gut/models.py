@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, Optional
 
 
 class ShellCommand(BaseModel):
@@ -101,4 +101,14 @@ class CommandToExecute(BaseModel):
     )
     explanation: str = Field(
         description="Detailed-but-concise explanation of why is the command being executed."
+    )
+
+
+class CommandAnalysis(BaseModel):
+    explanation: str = Field(
+        description="Explanation of what the command does or should do, and, if needed, why the command should be changed."
+    )
+    corrected_command: Optional[str] = Field(
+        description="Corrected command. Leave the field blank if the command is already corrected",
+        default=None,
     )
