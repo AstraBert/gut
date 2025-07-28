@@ -1,7 +1,13 @@
 import pytest
 from pydantic import ValidationError
 
-from src.gut.models import ShellCommand, GhCommand, GitCommand, CommandToExecute
+from src.gut.models import (
+    ShellCommand,
+    GhCommand,
+    GitCommand,
+    CommandToExecute,
+    CommandAnalysis,
+)
 
 
 def test_shell_command():
@@ -36,3 +42,15 @@ def test_final_command():
     assert cmd.explanation == "This is a commit command."
     with pytest.raises(ValidationError):
         CommandToExecute(command=1, explanation="This is a wrong command.")
+
+
+def test_command_analysis():
+    cmd = CommandAnalysis(explanation="Explanation")
+    assert cmd.explanation == "Explanation"
+    assert cmd.corrected_command is None
+    cmd = CommandAnalysis(
+        explanation="Explanation", corrected_command="git commit -m 'first commit'"
+    )
+    assert cmd.corrected_command == "git commit -m 'first commit'"
+    with pytest.raises(ValidationError):
+        CommandAnalysis(explanation="Explanation", corrected_command=False)
