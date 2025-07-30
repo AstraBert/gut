@@ -35,3 +35,8 @@ disable_error_code = ["import-not-found", "import-untyped"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+addopts = [
+  "-s",
+  "-v",
+  "--tb=short"
+]

@@ -10,5 +10,6 @@ _banner = """
 """
 
 
-def _show_banner():
+def _show_banner() -> str:
     click.echo(click.style(_banner, fg="red", bold=False))
+    return _banner
