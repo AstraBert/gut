@@ -13,6 +13,7 @@ from .workflow.events import (
     ExecutedEvent,
     CommandMessageEvent,
 )
+from ._banner import _show_banner
 
 cs = Console()
 
@@ -135,6 +136,7 @@ async def run_workflow() -> int:
         default=None,
     )
     args = parser.parse_args()
+    _show_banner()
     if not args.command and not args.question:
         return await run_gut_workflow()
     else:

@@ -337,9 +337,10 @@ wheels = [
 
 [[package]]
 name = "gut-ai"
-version = "0.1.0"
+version = "0.3.1"
 source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "llama-index-llms-groq" },
     { name = "llama-index-workflows" },
     { name = "mypy" },
@@ -353,6 +354,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", specifier = ">=8.2.1" },
     { name = "llama-index-llms-groq", specifier = ">=0.3.2" },
     { name = "llama-index-workflows", specifier = ">=1.1.0" },
     { name = "mypy", specifier = ">=1.17.0" },
